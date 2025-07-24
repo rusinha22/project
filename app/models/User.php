@@ -6,106 +6,89 @@ class User {
     public $password;
     public $auth = false;
 
-    public function __construct() {}
+    public function __construct() {
 
-    // Just fetches one user row (for debugging purposes)
-    public function test() {
-        $db = db_connect();
-        $statement = $db->prepare("SELECT * FROM users;");
-        $statement->execute();
-        $rows = $statement->fetch(PDO::FETCH_ASSOC);
-        return $rows;
     }
 
-    // Authenticate user credentials and start session if valid
-    public function authenticate($username, $password) {
-        $username = strtolower($username);
-        $db = db_connect();
+    public function test () {
+      $db = db_connect();
+      $statement = $db->prepare("select * from users;");
+      $statement->execute();
+      $rows = $statement->fetch(PDO::FETCH_ASSOC);
+      return $rows;
+    }
 
-        // Check if user is currently locked out
-        if (isset($_SESSION['lockout']) && time() < $_SESSION['lockout']) {
-            $wait = $_SESSION['lockout'] - time();
-            echo "<p style='color:red;'>⏳ Account locked. Try again in {$wait} seconds.</p>";
-            echo "<p><a href='/login'>Back to Login</a></p>";
-            return;
-        }
+   public function authenticate($username, $password) {
+    $username = strtolower($username);
+    $db = db_connect();
 
-        $statement = $db->prepare("SELECT * FROM users WHERE username = :name;");
-        $statement->bindValue(':name', $username);
-        $statement->execute();
-        $rows = $statement->fetch(PDO::FETCH_ASSOC);
+    // SESSION LOCKOUT LOGIC
+    if (isset($_SESSION['failedAuth']) && $_SESSION['failedAuth'] >= 3) {
+        $elapsed = time() - ($_SESSION['lastFailedTime'] ?? 0);
 
-        $loginStatus = 'bad';
-
-        if ($rows && password_verify($password, $rows['password'])) {
-            $_SESSION['auth'] = 1;
-            $_SESSION['username'] = ucwords($username);
-            unset($_SESSION['failedAuth']);
-            unset($_SESSION['lockout']);
-            $loginStatus = 'good';
-
-            // Log successful attempt
-            $logStmt = $db->prepare("INSERT INTO logins (username, attempt) VALUES (:username, :attempt)");
-            $logStmt->execute([
-                ':username' => $username,
-                ':attempt' => $loginStatus
-            ]);
-
-            header('Location: /home');
+        if ($elapsed < 60) {
+            $remaining = 60 - $elapsed;
+            $_SESSION['error'] = "Too many login attempts. Try again in {$remaining} seconds.";
+            header('Location: /login');
             exit;
-
         } else {
-            // Log failed attempt
-            $logStmt = $db->prepare("INSERT INTO logins (username, attempt) VALUES (:username, :attempt)");
-            $logStmt->execute([
-                ':username' => $username,
-                ':attempt' => $loginStatus
-            ]);
-
-            $_SESSION['failedAuth'] = ($_SESSION['failedAuth'] ?? 0) + 1;
-
-            if ($_SESSION['failedAuth'] >= 3) {
-                $_SESSION['lockout'] = time() + 60; // Lock for 60 seconds
-                echo "<p style='color:red;'>❌ Too many failed attempts. You are locked out for 60 seconds.</p>";
-                echo "<p><a href='/login'>Back to Login</a></p>";
-            } else {
-                echo "<p style='color:red;'>❌ Invalid credentials. Attempt {$_SESSION['failedAuth']} of 3.</p>";
-                echo "<p><a href='/login'>Try again</a></p>";
-            }
-
-            return;
+            // Lockout expired
+            $_SESSION['failedAuth'] = 0;
+            unset($_SESSION['lastFailedTime']);
         }
     }
+     // Proceed to verify credentials
+      $statement = $db->prepare("SELECT * FROM users WHERE username = :name;");
+      $statement->bindValue(':name', $username);
+      $statement->execute();
+      $rows = $statement->fetch(PDO::FETCH_ASSOC);
+       if ($rows && password_verify($password, $rows['password'])) {
+           $_SESSION['auth'] = 1;
+           $_SESSION['username'] = ucwords($username);
+           $_SESSION['user_id'] = $rows['id']; 
+           $_SESSION['is_admin'] = $rows['is_admin'];
+           $_SESSION['success'] = "You're now logged in, " . ucwords($username) . "!";
+           unset($_SESSION['failedAuth'], $_SESSION['lastFailedTime']);
 
-    // Create a new user account with hashed password
-    public function createUser($username, $password) {
-        $username = strtolower($username);
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $db = db_connect();
+           $this->logAttempt($username, 'success');
+           header('Location: /home');
+           exit;
+       }
 
-        // Check if username already exists
-        $checkStmt = $db->prepare("SELECT rupsin FROM users WHERE username = :username");
-        $checkStmt->bindValue(':username', $username);
-        $checkStmt->execute();
+           else {
+              // Log failed attempt
+              $_SESSION['failedAuth'] = ($_SESSION['failedAuth'] ?? 0) + 1;
+              $_SESSION['lastFailedTime'] = time();
 
-        if ($checkStmt->fetch()) {
-            echo "<p style='color:red;'>❌ Username already exists!</p>";
-            echo "<p><a href='/create'>Go back to register</a></p>";
-            return;
-        }
+              $_SESSION['error'] = "Invalid username or password.";
+              $this->logAttempt($username, 'fail'); 
+              header('Location: /login');
+              exit;
+          }
 
-        try {
-            $statement = $db->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-            $statement->bindValue(':username', $username);
-            $statement->bindValue(':password', $hash);
-            $statement->execute();
+   }
+  private function logAttempt($username, $status) {
+      $db = db_connect();
+      $stmt = $db->prepare("INSERT INTO login_logs (username, attempt) VALUES (:username, :attempt)");
+      $stmt->bindValue(':username', $username);
+      $stmt->bindValue(':attempt', $status === 'success' ? 1 : 0, PDO::PARAM_INT);
+      $stmt->execute();
+  }
+  public function register($username, $password) {
+  $db = db_connect();
 
-            echo "<p style='color:green;'>✅ Account created successfully!</p>";
-            echo "<p><a href='/login'>Click here to log in</a></p>";
-            return;
-
-        } catch (PDOException $e) {
-            echo "<p style='color:red;'>❌ Registration failed: " . $e->getMessage() . "</p>";
-        }
-    }
+  // Check if user exists
+  $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
+  $stmt->bindValue(':username', strtolower($username));
+  $stmt->execute();
+  if ($stmt->fetch()) {
+      die('Username already taken.');
+  }
+    // Hash password
+    $hashed = password_hash($password, PASSWORD_DEFAULT);
+     $stmt = $db->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
+     $stmt->bindValue(':username', strtolower($username));
+     $stmt->bindValue(':password', $hashed);
+     $stmt->execute();
+}
 }

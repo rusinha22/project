@@ -14,13 +14,13 @@ class Create extends Controller {
 
             // Validation: passwords must match
             if ($password !== $confirm) {
-                echo "❌ Passwords do not match.";
+                echo "Passwords do not match.";
                 return;
             }
 
             // Validation: fields can't be empty
             if (empty($username) || empty($password)) {
-                echo "❌ All fields are required.";
+                echo "All fields are required.";
                 return;
             }
 
@@ -32,7 +32,7 @@ class Create extends Controller {
                exit;
 
             } catch (Exception $e) {
-                echo "❌ Registration failed: " . $e->getMessage();
+                echo "Registration failed: " . $e->getMessage();
                 return;
             }
         }
