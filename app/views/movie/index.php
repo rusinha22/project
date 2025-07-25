@@ -1,23 +1,32 @@
 <?php require 'app/views/templates/headerPublic.php'; ?>
 
+<style>
+    .gradient-bg {
+        background: linear-gradient(135deg, #2d0a4b, #4b1d74);
+    }
+</style>
+
+<div class="gradient-bg min-vh-100 d-flex justify-content-center align-items-center text-center text-light">
+    <div class="p-5 bg-dark bg-opacity-75 rounded-4 shadow-lg" style="max-width: 600px; width: 100%;">
+        <h1 class="lead fst-italic display-4 fw-bold mb-3 text-white">MoviePanel</h1>
+        <p class="lead fst-italic text-light mb-4">Discover your next movie obsession</p>
         <form method="get" action="/movie/index" class="d-flex justify-content-center">
             <input 
                 type="text" 
                 name="title" 
-                class="form-control form-control-lg w-75 rounded-pill px-4 me-2 border-0 shadow-sm" 
+                class="form-control form-control-lg rounded-pill w-75 me-2 border-0 shadow-sm" 
                 placeholder="Enter movie title..." 
                 required
             >
             <button 
                 type="submit" 
-                class="btn btn-light btn-lg rounded-pill px-4 shadow-sm"
-                style="white-space: nowrap;"
+                class="btn btn-light btn-lg rounded-pill px-4"
             >
                 <i class="bi bi-search"></i> Search
             </button>
         </form>
     </div>
-</main>
+</div>
 
 <?php if (isset($_GET['logout'])): ?>
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
