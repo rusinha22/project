@@ -8,6 +8,10 @@ class Movie extends Controller {
                 // Search for movie
                 $api = $this->model('Api');
                 $movie = $api->searchMovie($title);
+            
             }
+            // Generate dynamic AI Review using the movie's title
+            $review = $api->generateReview($movie['Title']);
+
         }
 }
