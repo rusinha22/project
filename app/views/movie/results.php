@@ -51,6 +51,7 @@
                     <div class="alert alert-info"><?= nl2br(htmlspecialchars($review)) ?></div>
                 </div>
             </div>
+            
             <div class="text-center mt-4">
                 <a href="/movie/index" class="back-btn">← Search another movie</a>
             </div>

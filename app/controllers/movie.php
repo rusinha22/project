@@ -29,4 +29,22 @@ class Movie extends Controller {
             'error' => $error
         ]);
     }
+    public function rate() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['movie_title'] ?? '';
+            $rating = $_POST['rating'] ?? null;
+
+            if ($title && $rating) {
+                // Save the rating in the database
+                $model = $this->model('Rating'); // You’ll create this model next
+                $model->save($title, $rating);
+
+                header("Location: /movie/index?title=" . urlencode($title) . "&success=1");
+                exit;
+            } else {
+                echo "Invalid rating data.";
+            }
+        }
+    }
+
 }
