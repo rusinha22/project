@@ -15,7 +15,7 @@
                 type="text" 
                 name="title" 
                 class="form-control form-control-lg rounded-pill w-75 me-2 border-0 shadow-sm" 
-                placeholder="Enter movie title..." 
+                placeholder="Search for a movie..." 
                 required
             >
             <button 

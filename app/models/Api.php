@@ -4,7 +4,7 @@ class Api {
     private $geminiKey;
 
     public function __construct() {
-        $this->omdbKey   = $_ENV['OMDB']   ?? null;
+        $this->omdbKey   = $_ENV['OMDB'] ?? null;
         $this->geminiKey = $_ENV['GEMINI'] ?? null;
     }
 
@@ -12,14 +12,15 @@ class Api {
         $encodedTitle = urlencode($title);
         $url = "http://www.omdbapi.com/?apikey={$this->omdbKey}&t={$encodedTitle}";
 
-        $response = file_get_contents($url);
+        $response = file_get_contents($url); // ✅ actually fetch data
         return json_decode($response, true);
     }
 
-    public function generateReview($title) {
+
+    public function generateReviews($title) {
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$this->geminiKey}";
-        
-        $prompt = "Write an AI review for the movie titled '{$title}'.";
+
+        $prompt = "Write an medium AI review out of 5 for the movie titled '{$title}'.";
 
         $payload = [
             "contents" => [
@@ -54,4 +55,3 @@ class Api {
         return $result['candidates'][0]['content']['parts'][0]['text'] ?? 'We are still working on AI review. Check back soon!';
     }
 }
-?>
