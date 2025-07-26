@@ -30,7 +30,7 @@ require 'app/views/templates/headerPublic.php';
 
     .form-control {
         background-color: #333;
-        color: #fff;
+        color: #fff !important;
         border: none;
         border-radius: 30px;
         padding-left: 1rem;
