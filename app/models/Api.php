@@ -20,7 +20,7 @@ class Api {
     public function generateReviews($title) {
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$this->geminiKey}";
 
-        $prompt = "Write an medium AI review out of 5 for the movie titled '{$title}'.";
+        $prompt = "Write a 15 line AI review out of 5 for the movie titled '{$title}'.";
 
         $payload = [
             "contents" => [

@@ -18,7 +18,7 @@ class Movie extends Controller {
                 $error = 'No movie found or invalid response.';
             }
         } else {
-            $error = 'Please enter a movie title.';
+            $this->view('movie/index');
         }
 
         

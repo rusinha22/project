@@ -1,27 +1,33 @@
-<pre><?php var_dump(get_defined_vars()); ?></pre>
 <?php require 'app/views/templates/headerPublic.php'; ?>
 
-<!-- Modern background -->
-<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #2d0a4b, #4b1d74);">
-    <main class="container py-5 text-light">
-        <div class="mx-auto" style="max-width: 700px;">
-            <div class="p-4 rounded-4 shadow-lg bg-dark bg-opacity-75">
-                <h2 class="fw-bold mb-4">AI Review for 
-                    <span class="text-warning">
-                        <?= isset($title) ? htmlspecialchars($title) : 'Unknown Movie' ?>
-                    </span>
-                </h2>
+<style>
+    body {
+        background-color: #141414;
+        color: #fff;
+    }
 
-                <div class="alert bg-light text-dark rounded-3 px-4 py-3 border-0 shadow-sm mb-4">
-                    <?= isset($review) ? nl2br(htmlspecialchars($review)) : 'No review available.' ?>
-                </div>
+    .review-panel {
+        background-color: #000;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+    }
 
-                <a href="/movie/index" class="btn btn-warning btn-lg rounded-pill px-4 shadow-sm">
-                    Search Another Movie
-                </a>
-            </div>
+    .alert-info {
+        background-color: #1f1f1f;
+        border-left: 4px solid #e50914;
+        color: #fff;
+    }
+</style>
+
+<main class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="review-panel text-center w-100" style="max-width: 720px;">
+        <h2 class="mb-4">🎬 AI Review</h2>
+        <div class="alert alert-info fs-5">
+            <?= nl2br(htmlspecialchars($review ?? "No review available.")) ?>
         </div>
-    </main>
-</div>
+        <a href="/movie/index" class="btn btn-danger mt-4">Search Another</a>
+    </div>
+</main>
 
 <?php require 'app/views/templates/footer.php'; ?>

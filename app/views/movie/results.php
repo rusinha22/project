@@ -1,33 +1,58 @@
-
-
 <?php require 'app/views/templates/headerPublic.php'; ?>
+
+<style>
+    body {
+        background-color: #141414;
+        color: #ffffff;
+    }
+
+    .movie-box {
+        background-color: #000;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 0 25px rgba(255, 0, 0, 0.1);
+    }
+
+    .movie-poster {
+        border-radius: 15px;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .alert-info {
+        background-color: #222;
+        color: #fff;
+        border-left: 5px solid #e50914;
+    }
+
+    .back-btn {
+        color: #e50914;
+        text-decoration: none;
+    }
+
+    .back-btn:hover {
+        text-decoration: underline;
+    }
+</style>
 
 <main class="container py-5">
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger shadow-sm rounded-3">
-            <?= htmlspecialchars($error) ?>
-        </div>
-
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php elseif ($movie): ?>
-        <div class="row mb-5 align-items-start">
-            <div class="col-md-4 mb-3 mb-md-0">
-                <img src="<?= htmlspecialchars($movie['Poster']) ?>" alt="Movie Poster" class="img-fluid rounded-3 shadow-sm">
-            </div>
-            <div class="col-md-8">
-                <h2 class="fw-bold mb-3">
-                    <?= htmlspecialchars($movie['Title']) ?>
-                    <small class="text-muted">(<?= htmlspecialchars($movie['Year']) ?>)</small>
-                </h2>
-
-                <p><strong>Genre:</strong> <?= htmlspecialchars($movie['Genre']) ?></p>
-                <p><strong>Plot Summary:</strong> <?= htmlspecialchars($movie['Plot']) ?></p>
-
-                <div class="mt-4">
-                    <h4 class="mb-2">AI-Generated Review</h4>
-                    <div class="alert alert-info bg-opacity-75 rounded-3 shadow-sm">
-                        <?= nl2br(htmlspecialchars($review)) ?>
-                    </div>
+        <div class="movie-box mx-auto" style="max-width: 900px;">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="<?= htmlspecialchars($movie['Poster']) ?>" alt="Poster" class="img-fluid movie-poster">
                 </div>
+                <div class="col-md-8">
+                    <h2><?= htmlspecialchars($movie['Title']) ?> <small class="text-muted">(<?= htmlspecialchars($movie['Year']) ?>)</small></h2>
+                    <p><strong>Genre:</strong> <?= htmlspecialchars($movie['Genre']) ?></p>
+                    <p><strong>Plot:</strong> <?= htmlspecialchars($movie['Plot']) ?></p>
+                    <h4 class="mt-4">AI Review</h4>
+                    <div class="alert alert-info"><?= nl2br(htmlspecialchars($review)) ?></div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="/movie/index" class="back-btn">← Search another movie</a>
             </div>
         </div>
     <?php endif; ?>
