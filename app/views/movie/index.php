@@ -1,4 +1,7 @@
-<?php require 'app/views/templates/headerPublic.php'; ?>
+<?php
+
+require 'app/views/templates/headerPublic.php';
+?>
 
 <style>
     body {
@@ -53,25 +56,6 @@
     .btn-search:hover {
         background-color: #f40612;
     }
-
-    .auth-links {
-        margin-top: 1.5rem;
-    }
-
-    .auth-links a {
-        color: #fff;
-        background-color: #e50914;
-        padding: 0.5rem 1.25rem;
-        border-radius: 25px;
-        margin: 0 0.5rem;
-        font-weight: bold;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .auth-links a:hover {
-        background-color: #f40612;
-    }
 </style>
 
 <div class="min-vh-100 d-flex justify-content-center align-items-center text-center px-3">
@@ -87,29 +71,11 @@
                 placeholder="Search for a movie..." 
                 required
             >
-            <button type="submit" class="btn btn-search btn-lg px-4 bg-red">
+            <button type="submit" class="btn btn-search btn-lg px-4">
                 <i class="bi bi-search"></i> Search
             </button>
         </form>
-
-        <div class="auth-links">
-            <a href="/login">Login</a>
-            <a href="/create">Create Account</a>
-        </div>
     </div>
 </div>
-
-<?php if (isset($_GET['logout'])): ?>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
-        <div class="toast show align-items-center text-bg-success border-0" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    You have been logged out successfully.
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-<?php endif; ?>
 
 <?php require 'app/views/templates/footer.php'; ?>

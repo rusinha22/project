@@ -7,7 +7,7 @@ class Rating {
     }
 
     public function save($title, $rating) {
-        $stmt = $this->db->prepare("INSERT INTO ratingform (title, rating) VALUES (:title, :rating)");
+        $stmt = $this->db->prepare("INSERT INTO rating_form (title, rating) VALUES (:title, :rating)");
         $stmt->execute([
             ':title' => $title,
             ':rating' => $rating

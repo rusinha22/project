@@ -27,7 +27,7 @@ class Create extends Controller {
             // Try to create user
             $user = $this->model('User');
             try {
-                $user->createUser($username, $password);
+                $user->register($username, $password);
                header("Location: /login");
                exit;
 
